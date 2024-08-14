@@ -63,7 +63,8 @@ import net.runelite.client.util.Text;
 import net.runelite.client.util.WildcardMatcher;
 import org.apache.commons.lang3.StringUtils;
 import javax.inject.Inject;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Random;
@@ -589,7 +590,7 @@ public class BetterNpcHighlightPlugin extends Plugin implements KeyListener
 							.setIdentifier(event.getIdentifier())
 							.setParam0(event.getActionParam0())
 							.setParam1(event.getActionParam1())
-							.setType(config.presetColorAmount() == BetterNpcHighlightConfig.presetColorAmount.ZERO ? MenuAction.RUNELITE : MenuAction.RUNELITE_SUBMENU)
+							.setType(MenuAction.RUNELITE)
 							.onClick(this::tagNPC);
 
 						if (parent != null)
@@ -604,8 +605,7 @@ public class BetterNpcHighlightPlugin extends Plugin implements KeyListener
 
 	public void tagNPC(MenuEntry event)
 	{
-		//Submenu if there are more than 1 preset colors selected, RuneLite if no preset colors
-		if (event.getType() == MenuAction.RUNELITE_SUBMENU || event.getType() == MenuAction.RUNELITE)
+		if (event.getType() == MenuAction.RUNELITE)
 		{
 			if ((event.getOption().contains("Tag") || event.getOption().contains("Untag")) && (event.getOption().contains("-Tile")
 				|| event.getOption().contains("-True-Tile") || event.getOption().contains("-SW-Tile") || event.getOption().contains("-SW-True-Tile")
@@ -668,10 +668,11 @@ public class BetterNpcHighlightPlugin extends Plugin implements KeyListener
 					if (c != null)
 					{
 						int preset = index;
-						client.createMenuEntry(idx--)
+						Menu submenu = parent.createSubMenu();
+
+						submenu.createMenuEntry(idx--)
 							.setOption(ColorUtil.prependColorTag("Preset color " + index, c))
 							.setType(MenuAction.RUNELITE)
-							.setParent(parent)
 							.onClick(e ->
 							{
 								if (npc.getName() != null)
@@ -689,10 +690,10 @@ public class BetterNpcHighlightPlugin extends Plugin implements KeyListener
 		{
 			if (n.getNpc() == npc)
 			{
-				client.createMenuEntry(idx--)
+				Menu submenu = parent.createSubMenu();
+				submenu.createMenuEntry(idx--)
 					.setOption("Reset color")
 					.setType(MenuAction.RUNELITE)
-					.setParent(parent)
 					.onClick(e ->
 					{
 						if (npc.getName() != null)
